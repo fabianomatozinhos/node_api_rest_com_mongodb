@@ -4,7 +4,7 @@ class LivroController {
 
     static listarTodosLivros = async (req, res) => {
         try {
-            let arrayLivros =  await  livros.find({});
+            let arrayLivros =  await  livros.find({}).populate('autor').exec();
             res.status(200).json(arrayLivros);
         } catch (error) {
             res.status(500).send({message: `${error.message} - falha ao bucar todos os livros`})
@@ -14,7 +14,7 @@ class LivroController {
     static listarLivrosPorId = async (req, res) => {
         try {
             const id = req.params.id;
-            let livro =  await  livros.findById(id);
+            let livro =  await  livros.findById(id).populate('autor', 'nome').exec();
             res.status(200).json(livro);
         } catch (error) {
             res.status(400).send({message: `${error.message} - falha ao bucar o livro`})
@@ -48,6 +48,16 @@ class LivroController {
             res.status(200).send({message: `O Livro foi excluido com sucesso`})
         } catch (error) {
             res.status(500).send({message: `${error.message} - falha ao excluir o livro`})
+        }
+    }
+
+    static listarLivroPorEditora = async (req, res) => {
+        try {
+            const editora = req.query.editora;
+            let livro = await livros.find({'editora': editora});
+            res.status(200).json(livro)
+        } catch (error) {
+            res.status(500).send({message: `${error.message} - falha ao realizar a busca`})
         }
     }
 }
